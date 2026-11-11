@@ -15,6 +15,10 @@ inputs:
     description: 'Local template file override. Empty uses the README.md.template bundled with this action'
     required: false
     default: ''
+  version:
+    description: 'readme-gen ref used to resolve the banners/ library (GitHub Contents API). Set this to the same ref this action is pinned to via uses:'
+    required: false
+    default: 'main'
   gomplate_version:
     description: 'gomplate version'
     required: false
@@ -62,6 +66,7 @@ runs:
         fi
 
         ARGS+=(--output "${{ inputs.output }}")
+        ARGS+=(--version "${{ inputs.version }}")
 
         if [ -n "${{ inputs.template }}" ]; then
           ARGS+=(--template "${{ inputs.template }}")

@@ -104,23 +104,32 @@ if [ -z "${TEMPLATE_FILE}" ] && [ -z "${TEMPLATE_URL}" ]; then
 fi
 
 TMP_FILE="$(mktemp)"
+BANNERS_API_FILE="$(mktemp)"
+mv "${BANNERS_API_FILE}" "${BANNERS_API_FILE}.json"
+BANNERS_API_FILE="${BANNERS_API_FILE}.json"
 BANNERS_JSON_FILE="$(mktemp)"
 mv "${BANNERS_JSON_FILE}" "${BANNERS_JSON_FILE}.json"
 BANNERS_JSON_FILE="${BANNERS_JSON_FILE}.json"
-trap 'rm -f "${TMP_FILE}" "${BANNERS_JSON_FILE}"' EXIT
+trap 'rm -f "${TMP_FILE}" "${BANNERS_API_FILE}" "${BANNERS_JSON_FILE}"' EXIT
 
-BANNERS_DIR="banners"
-{
-  printf '['
-  first=true
-  if [ -d "${BANNERS_DIR}" ]; then
-    while IFS= read -r -d '' f; do
-      if [ "${first}" = "true" ]; then first=false; else printf ','; fi
-      printf '"%s"' "${f}"
-    done < <(find "${BANNERS_DIR}" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.gif" -o -iname "*.svg" \) -print0 | sort -z)
-  fi
-  printf ']'
-} > "${BANNERS_JSON_FILE}"
+# Banners are a shared library bundled with readme-gen itself (banners/ in
+# this repo, pinned to READMEGEN_VERSION) -- not a per-consumer directory.
+BANNERS_AUTH_ARGS=()
+if [ -n "${GITHUB_TOKEN:-}" ]; then
+  BANNERS_AUTH_ARGS+=(-H "Authorization: Bearer ${GITHUB_TOKEN}")
+fi
+
+if curl -fsSL "${BANNERS_AUTH_ARGS[@]}" \
+    "https://api.github.com/repos/rafalmasiarek/readme-gen/contents/banners?ref=${READMEGEN_VERSION}" \
+    -o "${BANNERS_API_FILE}" 2>/dev/null \
+  && gomplate \
+      -d "api=${BANNERS_API_FILE}" \
+      -i '{{- $urls := coll.Slice -}}{{- range (ds "api") -}}{{- if eq .type "file" -}}{{- $urls = (coll.Append .download_url $urls) -}}{{- end -}}{{- end -}}{{ $urls | data.ToJSON }}' \
+      > "${BANNERS_JSON_FILE}" 2>/dev/null; then
+  :
+else
+  echo "[]" > "${BANNERS_JSON_FILE}"
+fi
 
 if [ -n "${TEMPLATE_FILE}" ]; then
   if [ ! -f "${TEMPLATE_FILE}" ]; then

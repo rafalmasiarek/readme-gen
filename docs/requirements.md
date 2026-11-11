@@ -57,3 +57,5 @@ rm -f readmegen-cli readmegen-cli.md5
 
 readmegen --help
 ```
+
+A rolling `cli-latest` tag/release is also kept pointing at the most recent CLI build (re-uploaded on every `cli-v*.*.*` release, marked as a GitHub prerelease so it never shows as the repo's "Latest" release). Use a pinned `cli-v*.*.*` tag for anything other than tracking HEAD.
