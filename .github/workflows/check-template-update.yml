@@ -1,0 +1,205 @@
+name: check-template-update
+
+on:
+  workflow_call:
+    inputs:
+      config:
+        description: "Config file. Empty means auto-detect README.yaml, README.yml, README.json"
+        required: false
+        type: string
+        default: ""
+
+      output:
+        description: "Generated README output file"
+        required: false
+        type: string
+        default: "README.md"
+
+      version_file:
+        description: "File storing the currently pinned template version"
+        required: false
+        type: string
+        default: ".readmegen-template-version"
+
+      gomplate_version:
+        description: "gomplate version"
+        required: false
+        type: string
+        default: "v5.1.0"
+
+      commit_message:
+        description: "Commit message"
+        required: false
+        type: string
+        default: "chore: update README template [skip ci]"
+
+      target_branch:
+        description: "Branch to push changes to. Empty means current/default branch"
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  check-template-update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve branch
+        id: branch
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -n "${{ inputs.target_branch }}" ]; then
+            BRANCH="${{ inputs.target_branch }}"
+          else
+            BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
+          fi
+
+          echo "branch=${BRANCH}" >> "${GITHUB_OUTPUT}"
+          echo "Using branch: ${BRANCH}"
+
+      - name: Checkout target branch
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BRANCH="${{ steps.branch.outputs.branch }}"
+
+          git fetch origin "${BRANCH}"
+          git checkout "${BRANCH}"
+
+      - name: Resolve latest template release
+        id: latest
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          curl -fsSL "https://api.github.com/repos/rafalmasiarek/readme-gen/releases" \
+            -o /tmp/readmegen-releases.json
+
+          # Non-CLI template releases are tagged "v1.2.3"; CLI releases are tagged "cli-v1.2.3".
+          # The GitHub API returns releases newest-first, so the first regex match is the latest.
+          LATEST="$(gomplate -d r=/tmp/readmegen-releases.json -i '{{- $found := "" -}}{{- range (ds "r") -}}{{- if and (eq $found "") (regexp.Match "^v[0-9]+\\.[0-9]+\\.[0-9]+$" .tag_name) -}}{{- $found = .tag_name -}}{{- end -}}{{- end -}}{{- $found -}}')"
+
+          if [ -z "${LATEST}" ]; then
+            echo "Could not resolve latest template release" >&2
+            exit 1
+          fi
+
+          echo "version=${LATEST}" >> "${GITHUB_OUTPUT}"
+          echo "Latest template release: ${LATEST}"
+
+      - name: Read pinned template version
+        id: pinned
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          VERSION_FILE="${{ inputs.version_file }}"
+
+          if [ -f "${VERSION_FILE}" ]; then
+            echo "version=$(cat "${VERSION_FILE}")" >> "${GITHUB_OUTPUT}"
+          else
+            echo "version=" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Cache gomplate
+        if: steps.pinned.outputs.version != steps.latest.outputs.version
+        id: cache-gomplate
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/bin/gomplate
+          key: gomplate-${{ runner.os }}-${{ runner.arch }}-${{ inputs.gomplate_version }}
+
+      - name: Install gomplate
+        if: steps.pinned.outputs.version != steps.latest.outputs.version && steps.cache-gomplate.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          GOMPLATE_VERSION="${{ inputs.gomplate_version }}"
+
+          mkdir -p "${HOME}/.local/bin"
+
+          curl -fsSL \
+            "https://github.com/hairyhenderson/gomplate/releases/download/${GOMPLATE_VERSION}/gomplate_linux-amd64" \
+            -o "${HOME}/.local/bin/gomplate"
+
+          chmod +x "${HOME}/.local/bin/gomplate"
+
+      - name: Install READMEgen CLI
+        if: steps.pinned.outputs.version != steps.latest.outputs.version
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p "${HOME}/.local/bin"
+
+          curl -fsSL \
+            "https://raw.githubusercontent.com/rafalmasiarek/readme-gen/main/bin/readmegen" \
+            -o "${HOME}/.local/bin/readmegen"
+
+          chmod +x "${HOME}/.local/bin/readmegen"
+
+      - name: Add tools to PATH
+        if: steps.pinned.outputs.version != steps.latest.outputs.version
+        shell: bash
+        run: echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
+
+      - name: Generate README at latest template version
+        if: steps.pinned.outputs.version != steps.latest.outputs.version
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ARGS=()
+
+          if [ -n "${{ inputs.config }}" ]; then
+            ARGS+=(--config "${{ inputs.config }}")
+          fi
+
+          ARGS+=(--output "${{ inputs.output }}")
+          ARGS+=(--version "${{ steps.latest.outputs.version }}")
+
+          readmegen "${ARGS[@]}"
+
+          echo -n "${{ steps.latest.outputs.version }}" > "${{ inputs.version_file }}"
+
+      - name: Check for changes
+        if: steps.pinned.outputs.version != steps.latest.outputs.version
+        id: changes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet -- "${{ inputs.output }}" "${{ inputs.version_file }}"; then
+            echo "changed=false" >> "${GITHUB_OUTPUT}"
+            echo "No changes detected"
+          else
+            echo "changed=true" >> "${GITHUB_OUTPUT}"
+            echo "Changes detected"
+            git diff -- "${{ inputs.output }}" "${{ inputs.version_file }}"
+          fi
+
+      - name: Commit and push changes
+        if: steps.pinned.outputs.version != steps.latest.outputs.version && steps.changes.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BRANCH="${{ steps.branch.outputs.branch }}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add "${{ inputs.output }}" "${{ inputs.version_file }}"
+          git commit -m "${{ inputs.commit_message }}"
+          git push origin "HEAD:${BRANCH}"

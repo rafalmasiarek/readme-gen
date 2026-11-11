@@ -1,0 +1,76 @@
+name: 'readme-gen'
+description: 'Generate a README.md from README.yaml/README.yml/README.json using the bundled README.md.template'
+author: 'rafalmasiarek'
+
+inputs:
+  config:
+    description: 'Config file. Empty means auto-detect README.yaml, README.yml, README.json'
+    required: false
+    default: ''
+  output:
+    description: 'Generated README output file'
+    required: false
+    default: 'README.md'
+  template:
+    description: 'Local template file override. Empty uses the README.md.template bundled with this action'
+    required: false
+    default: ''
+  gomplate_version:
+    description: 'gomplate version'
+    required: false
+    default: 'v5.1.0'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Cache gomplate
+      id: cache-gomplate
+      uses: actions/cache@v4
+      with:
+        path: ~/.local/bin/gomplate
+        key: gomplate-${{ runner.os }}-${{ runner.arch }}-${{ inputs.gomplate_version }}
+
+    - name: Install gomplate
+      if: steps.cache-gomplate.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        mkdir -p "${HOME}/.local/bin"
+
+        curl -fsSL \
+          "https://github.com/hairyhenderson/gomplate/releases/download/${{ inputs.gomplate_version }}/gomplate_linux-amd64" \
+          -o "${HOME}/.local/bin/gomplate"
+
+        chmod +x "${HOME}/.local/bin/gomplate"
+
+    - name: Add gomplate to PATH
+      shell: bash
+      run: echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
+
+    - name: Generate README
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        chmod +x "${{ github.action_path }}/bin/readmegen"
+
+        ARGS=()
+
+        if [ -n "${{ inputs.config }}" ]; then
+          ARGS+=(--config "${{ inputs.config }}")
+        fi
+
+        ARGS+=(--output "${{ inputs.output }}")
+
+        if [ -n "${{ inputs.template }}" ]; then
+          ARGS+=(--template "${{ inputs.template }}")
+        else
+          ARGS+=(--template "${{ github.action_path }}/README.md.template")
+        fi
+
+        "${{ github.action_path }}/bin/readmegen" "${ARGS[@]}"
+
+branding:
+  icon: 'file-text'
+  color: 'blue'

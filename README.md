@@ -48,6 +48,7 @@ but WITHOUT ANY WARRANTY.
 
 Source: https://opensource.org/license/gpl-3-0/
 ```
+See [LICENSE](LICENSE) for full details.
 ## Authors
 
 - Rafał Masiarek | [website](https://masiarek.pl) | [email](mailto:rafal@masiarek.pl) | [github](https://github.com/rafalmasiarek)
