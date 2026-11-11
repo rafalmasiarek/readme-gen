@@ -1,0 +1,60 @@
+name: auto-tag-template
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "README.md.template"
+      - "bin/readmegen"
+      - "banners/**"
+
+permissions:
+  contents: write
+
+jobs:
+  auto-tag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Compute next patch version
+        id: next
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch --tags
+
+          LATEST="$(git tag --list 'v*.*.*' | grep -vE '^cli-' | sort -V | tail -n1)"
+
+          if [ -z "${LATEST}" ]; then
+            NEXT="v0.0.1"
+          else
+            VERSION="${LATEST#v}"
+            MAJOR="$(echo "${VERSION}" | cut -d. -f1)"
+            MINOR="$(echo "${VERSION}" | cut -d. -f2)"
+            PATCH="$(echo "${VERSION}" | cut -d. -f3)"
+            NEXT="v${MAJOR}.${MINOR}.$((PATCH + 1))"
+          fi
+
+          echo "latest=${LATEST}" >> "${GITHUB_OUTPUT}"
+          echo "next=${NEXT}" >> "${GITHUB_OUTPUT}"
+          echo "Latest template tag: ${LATEST:-none}, next: ${NEXT}"
+
+      - name: Create and push tag
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          NEXT="${{ steps.next.outputs.next }}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git tag "${NEXT}"
+          git push origin "${NEXT}"
+
+          echo "Pushed tag ${NEXT}"

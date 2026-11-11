@@ -193,20 +193,11 @@ icons_version: v2.0.3
 
 ## Banners
 
-Drop image files (`.png`, `.jpg`, `.jpeg`, `.gif`, `.svg`) into a `banners/` directory at the repository root. The `readmegen` CLI lists them (sorted by file name) and renders each as an image, by its relative path, right after `logo`. No config key is needed — adding or removing a file in `banners/` changes the next generated README.
+Banners are a shared library bundled with `readme-gen` itself, not something a consumer repository configures. Every image file in this repository's own `banners/` directory is rendered, unconditionally, right after `logo`, in every generated README — there is no config key and no per-repo opt-in/opt-out.
 
-```text
-banners/
-  we-support-ukraine.svg
-```
+The `readmegen` CLI resolves the list via the GitHub Contents API at the pinned `READMEGEN_VERSION` (the `--version`/`-v` flag, default `main`), so which banners appear is tied to which template version a repository is pinned to — the same way the rest of the template content is. Adding or removing a file under `banners/` in this repository is a content change to the template and gets its own tag (see `auto-tag-template.yml`).
 
-Renders as:
-
-```markdown
-![we-support-ukraine](banners/we-support-ukraine.svg)
-```
-
-This only works through the `readmegen` CLI (it performs the directory listing and passes it to the template as a `banners` datasource) — invoking `gomplate` directly against `README.md.template` without also passing `-d banners=...` renders no banners.
+This only works through the `readmegen` CLI (it resolves the list and passes it to the template as a `banners` datasource) — invoking `gomplate` directly against `README.md.template` without also passing `-d banners=...` renders no banners.
 
 ## Deprecated repositories
 

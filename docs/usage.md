@@ -64,6 +64,8 @@ Use a pinned template release:
 readmegen --version v1.0.0
 ```
 
+A rolling `latest` tag tracks the most recent template release (re-published as a prerelease on every `v*.*.*` release, so it never shows as the repo's "Latest" release). It also drives which `banners/` are resolved when no `--version` is given, since that defaults to `main` directly rather than this tag.
+
 Use a local template file:
 
 ```bash

@@ -140,3 +140,13 @@ jobs:
 ```
 
 The action does not commit or push — it only writes `output`. Pin it to a specific template release the same way as any action (`uses: rafalmasiarek/readme-gen@v1.0.0`), or pass `template:` to point at a local template file instead of the one bundled with the action.
+
+When pinning, also pass `version:` with the same ref — the action can't introspect the ref used in its own `uses:` line, so `version:` is how it resolves the `banners/` library consistently with the pinned template:
+
+```yaml
+- uses: rafalmasiarek/readme-gen@v1.0.0
+  with:
+    config: README.yaml
+    output: README.md
+    version: v1.0.0
+```

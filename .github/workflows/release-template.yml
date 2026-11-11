@@ -112,3 +112,43 @@ jobs:
             README.md.template
             dist/README.md.template.md5
             dist/README.md.template.sha256
+
+      # Re-publishes the same artifacts under a second, rolling "latest"
+      # tag/release (force-moved to this commit), marked as a prerelease so
+      # it never competes with the real semver tag for GitHub's own
+      # "Latest" badge -- same convention as php-docs/py-sanityctl. No
+      # second build: this only re-uploads what dist/ already has.
+      - name: Move latest tag to this release
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git tag -f latest
+          git push origin refs/tags/latest --force
+
+      - name: Create or update rolling latest release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if gh release view latest >/dev/null 2>&1; then
+            gh release edit latest \
+              --title "latest" \
+              --notes "Rolling prerelease built from main. For stable consumption use a semver tag (v*.*.*)."
+          else
+            gh release create latest \
+              --prerelease \
+              --title "latest" \
+              --notes "Rolling prerelease built from main. For stable consumption use a semver tag (v*.*.*)."
+          fi
+
+          gh release upload latest \
+            "dist/readmegen-${{ steps.release.outputs.version }}.tar.gz" \
+            "dist/readmegen-${{ steps.release.outputs.version }}.tar.gz.md5" \
+            "dist/readmegen-${{ steps.release.outputs.version }}.tar.gz.sha256" \
+            README.md.template \
+            dist/README.md.template.md5 \
+            dist/README.md.template.sha256 \
+            --clobber
