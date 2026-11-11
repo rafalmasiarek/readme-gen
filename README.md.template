@@ -1,10 +1,28 @@
 {{- $config := ds "config" -}}
+{{- $banners := coll.Slice -}}
+{{- if datasourceExists "banners" }}{{ $banners = ds "banners" }}{{ end -}}
 {{- $license := $config.license -}}
 {{- $apache2SourceURL := "https://opensource.org/license/apache-2-0/" -}}
 {{- $mitSourceURL := "https://opensource.org/licenses/MIT" -}}
 {{- $iscSourceURL := "https://opensource.org/licenses/ISC" -}}
 {{- $gpl3SourceURL := "https://opensource.org/license/gpl-3-0/" -}}
+{{- $iconsBaseURL := "https://cdn.masiarek.pl/icons" -}}
+{{- $iconsVersion := "v2.0.3" -}}
+{{- if has $config "icons_base_url" }}{{ $iconsBaseURL = $config.icons_base_url }}{{ end -}}
+{{- if has $config "icons_version" }}{{ $iconsVersion = $config.icons_version }}{{ end -}}
+{{- $iconPattern := `\{icon\s+([\w-]+)\}` -}}
+{{- $iconRepl := printf "![$1](%s/%s/$1.svg)" $iconsBaseURL $iconsVersion -}}
 # {{ if has $config "deprecated" }}**DEPRECATED** {{ end }}{{ $config.name }}
+
+{{- if has $config "deprecated" }}
+{{- if has $config.deprecated "notice" }}
+{{ $config.deprecated.notice }}
+
+{{- else }}
+### **THIS REPOSITORY IS NO LONGER MAINTAINED**
+
+{{- end }}
+{{- end }}
 
 {{- if and (has $config "badges") $config.badges }}
 {{ range $badge := $config.badges -}}
@@ -21,19 +39,15 @@
 
 {{- end }}
 
-{{- if has $config "deprecated" }}
-{{- if has $config.deprecated "notice" }}
-{{ $config.deprecated.notice }}
-
-{{- else }}
-### **THIS REPOSITORY IS NO LONGER MAINTAINED**
-
-{{- end }}
+{{- if $banners }}
+{{ range $banner := $banners -}}
+![{{ strings.TrimSuffix (path.Ext $banner) (path.Base $banner) }}]({{ $banner }})
+{{ end -}}
 {{- end }}
 
 {{- if and (has $config "context") $config.context }}
 {{ range $paragraph := $config.context -}}
-{{ $paragraph }}
+{{ regexp.Replace $iconPattern $iconRepl $paragraph }}
 
 {{ end -}}
 {{- end }}
@@ -113,6 +127,17 @@ but WITHOUT ANY WARRANTY.
 Source: {{ $gpl3SourceURL }}
 ```
 
+{{- else if eq $license "BUSL-1.1" }}
+![License: BUSL-1.1](https://img.shields.io/badge/license-BUSL--1.1-red)
+
+Business Source License 1.1.
+{{- if has $config "license_change_date" }}
+Source available; commercial use restricted until {{ $config.license_change_date }}.
+{{- end }}
+{{- if has $config "license_contact" }}
+For alternative licensing, contact: {{ $config.license_contact }}
+{{- end }}
+
 {{- else }}
 License: {{ $license }}
 {{- end }}
@@ -137,7 +162,7 @@ See [LICENSE](LICENSE) for full details.
 {{- if and (has $config "includes") $config.includes }}
 {{ range $file := $config.includes -}}
 {{- if file.Exists $file }}
-{{ file.Read $file }}
+{{ regexp.Replace $iconPattern $iconRepl (file.Read $file) }}
 
 {{- end }}
 {{ end -}}
