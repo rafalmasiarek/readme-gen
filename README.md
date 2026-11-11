@@ -1,6 +1,6 @@
 # READMEgen
-[![README.md.template](https://img.shields.io/github/v/release/Infrastrukturait/READMEgen?filter=!cli-*&sort=semver&label=template)](https://github.com/Infrastrukturait/READMEgen/releases)
-[![readmegen-cli](https://img.shields.io/github/v/release/Infrastrukturait/READMEgen?filter=cli-*&sort=semver&label=cli)](https://github.com/Infrastrukturait/READMEgen/releases)
+[![README.md.template](https://img.shields.io/github/v/release/rafalmasiarek/readme-gen?filter=!cli-*&sort=semver&label=template)](https://github.com/rafalmasiarek/readme-gen/releases)
+[![readmegen-cli](https://img.shields.io/github/v/release/rafalmasiarek/readme-gen?filter=cli-*&sort=semver&label=cli)](https://github.com/rafalmasiarek/readme-gen/releases)
 
 ![READMEgen](assets/readmegen-logo.png)
 ## About
@@ -55,10 +55,10 @@ Source: https://opensource.org/license/gpl-3-0/
 
 <!-- references -->
 
-[repo_link]: https://github.com/Infrastrukturait/READMEgen
+[repo_link]: https://github.com/rafalmasiarek/readme-gen
 [1]: https://gomplate.ca
 [2]: https://github.com/hairyhenderson/gomplate
 [3]: https://cloudposse.com
 [4]: https://github.com/cloudposse/build-harness
-[5]: https://github.com/Infrastrukturait/READMEgen/releases
+[5]: https://github.com/rafalmasiarek/readme-gen/releases
 

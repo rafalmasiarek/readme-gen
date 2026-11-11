@@ -24,7 +24,7 @@ permissions:
 
 jobs:
   generate-readme:
-    uses: Infrastrukturait/READMEgen/.github/workflows/generate-readme.yml@main
+    uses: rafalmasiarek/readme-gen/.github/workflows/generate-readme.yml@main
 ```
 
 ## Pin README template version
@@ -45,7 +45,7 @@ permissions:
 
 jobs:
   generate-readme:
-    uses: Infrastrukturait/READMEgen/.github/workflows/generate-readme.yml@main
+    uses: rafalmasiarek/readme-gen/.github/workflows/generate-readme.yml@main
     with:
       template_version: v1.0.0
 ```
@@ -68,7 +68,7 @@ permissions:
 
 jobs:
   generate-readme:
-    uses: Infrastrukturait/READMEgen/.github/workflows/generate-readme.yml@main
+    uses: rafalmasiarek/readme-gen/.github/workflows/generate-readme.yml@main
     with:
       cli_version: cli-v1.1.0
       template_version: v1.0.0

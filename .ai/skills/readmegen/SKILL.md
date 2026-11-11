@@ -219,7 +219,7 @@ readmegen --config README.yaml
 readmegen --config README.json --output README.md
 readmegen --version v1.0.0
 readmegen --template ./README.md.template
-readmegen --template-url https://raw.githubusercontent.com/Infrastrukturait/READMEgen/main/README.md.template
+readmegen --template-url https://raw.githubusercontent.com/rafalmasiarek/readme-gen/main/README.md.template
 readmegen --check
 ```
 
@@ -274,12 +274,12 @@ Use filtered badges:
 ```yaml
 badges:
   - name: READMEgen
-    image: https://img.shields.io/github/v/release/Infrastrukturait/READMEgen?filter=!cli-*&sort=semver&label=template
-    url: https://github.com/Infrastrukturait/READMEgen/releases
+    image: https://img.shields.io/github/v/release/rafalmasiarek/readme-gen?filter=!cli-*&sort=semver&label=template
+    url: https://github.com/rafalmasiarek/readme-gen/releases
 
   - name: CLI
-    image: https://img.shields.io/github/v/release/Infrastrukturait/READMEgen?filter=cli-*&sort=semver&label=cli
-    url: https://github.com/Infrastrukturait/READMEgen/releases
+    image: https://img.shields.io/github/v/release/rafalmasiarek/readme-gen?filter=cli-*&sort=semver&label=cli
+    url: https://github.com/rafalmasiarek/readme-gen/releases
 ```
 
 ## Documentation rules

@@ -100,7 +100,7 @@ if [ -n "${TEMPLATE_FILE}" ] && [ -n "${TEMPLATE_URL}" ]; then
 fi
 
 if [ -z "${TEMPLATE_FILE}" ] && [ -z "${TEMPLATE_URL}" ]; then
-  TEMPLATE_URL="https://raw.githubusercontent.com/Infrastrukturait/READMEgen/${READMEGEN_VERSION}/README.md.template"
+  TEMPLATE_URL="https://raw.githubusercontent.com/rafalmasiarek/readme-gen/${READMEGEN_VERSION}/README.md.template"
 fi
 
 TMP_FILE="$(mktemp)"

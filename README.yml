@@ -1,16 +1,16 @@
 name: READMEgen
-repo_url: https://github.com/Infrastrukturait/READMEgen
+repo_url: https://github.com/rafalmasiarek/readme-gen
 license: GPL-3.0
 logo: assets/readmegen-logo.png
 
 badges:
   - name: README.md.template
-    image: https://img.shields.io/github/v/release/Infrastrukturait/READMEgen?filter=!cli-*&sort=semver&label=template
-    url: https://github.com/Infrastrukturait/READMEgen/releases
+    image: https://img.shields.io/github/v/release/rafalmasiarek/readme-gen?filter=!cli-*&sort=semver&label=template
+    url: https://github.com/rafalmasiarek/readme-gen/releases
 
   - name: readmegen-cli
-    image: https://img.shields.io/github/v/release/Infrastrukturait/READMEgen?filter=cli-*&sort=semver&label=cli
-    url: https://github.com/Infrastrukturait/READMEgen/releases
+    image: https://img.shields.io/github/v/release/rafalmasiarek/readme-gen?filter=cli-*&sort=semver&label=cli
+    url: https://github.com/rafalmasiarek/readme-gen/releases
 
 context:
   - |
@@ -51,4 +51,4 @@ references:
   - https://github.com/hairyhenderson/gomplate
   - https://cloudposse.com
   - https://github.com/cloudposse/build-harness
-  - https://github.com/Infrastrukturait/READMEgen/releases
+  - https://github.com/rafalmasiarek/readme-gen/releases

@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   generate-readme:
-    uses: Infrastrukturait/READMEgen/.github/workflows/generate-readme.yml@main
+    uses: rafalmasiarek/readme-gen/.github/workflows/generate-readme.yml@main
     with:
       config: README.yml
       output: README.md

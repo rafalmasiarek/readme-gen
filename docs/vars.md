@@ -166,13 +166,13 @@ deprecated:
 
 ```yaml
 name: READMEgen
-repo_url: https://github.com/Infrastrukturait/READMEgen
+repo_url: https://github.com/rafalmasiarek/readme-gen
 license: GPL-3.0
 
 badges:
   - name: Release
-    image: https://img.shields.io/github/v/release/Infrastrukturait/READMEgen
-    url: https://github.com/Infrastrukturait/READMEgen/releases
+    image: https://img.shields.io/github/v/release/rafalmasiarek/readme-gen
+    url: https://github.com/rafalmasiarek/readme-gen/releases
 
 context:
   - |
@@ -198,13 +198,13 @@ references:
 ```json
 {
   "name": "READMEgen",
-  "repo_url": "https://github.com/Infrastrukturait/READMEgen",
+  "repo_url": "https://github.com/rafalmasiarek/readme-gen",
   "license": "GPL-3.0",
   "badges": [
     {
       "name": "Release",
-      "image": "https://img.shields.io/github/v/release/Infrastrukturait/READMEgen",
-      "url": "https://github.com/Infrastrukturait/READMEgen/releases"
+      "image": "https://img.shields.io/github/v/release/rafalmasiarek/readme-gen",
+      "url": "https://github.com/rafalmasiarek/readme-gen/releases"
     }
   ],
   "context": [

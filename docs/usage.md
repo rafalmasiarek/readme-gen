@@ -7,21 +7,21 @@ READMEgen can be used directly with `gomplate` or through the `readmegen` CLI he
 Generate `README.md` from a JSON config:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Infrastrukturait/READMEgen/main/README.md.template \
+curl -fsSL https://raw.githubusercontent.com/rafalmasiarek/readme-gen/main/README.md.template \
   | gomplate -d config=./README.json > README.md
 ```
 
 Generate `README.md` from a YAML config:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Infrastrukturait/READMEgen/main/README.md.template \
+curl -fsSL https://raw.githubusercontent.com/rafalmasiarek/readme-gen/main/README.md.template \
   | gomplate -d config=./README.yaml > README.md
 ```
 
 Use a pinned template release:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Infrastrukturait/READMEgen/v1.0.0/README.md.template \
+curl -fsSL https://raw.githubusercontent.com/rafalmasiarek/readme-gen/v1.0.0/README.md.template \
   | gomplate -d config=./README.yaml > README.md
 ```
 
@@ -73,7 +73,7 @@ readmegen --template ./README.md.template
 Use a custom remote template URL:
 
 ```bash
-readmegen --template-url https://raw.githubusercontent.com/Infrastrukturait/READMEgen/main/README.md.template
+readmegen --template-url https://raw.githubusercontent.com/rafalmasiarek/readme-gen/main/README.md.template
 ```
 
 Check whether the generated README is up to date:

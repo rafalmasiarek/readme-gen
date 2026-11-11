@@ -135,8 +135,8 @@ jobs:
 
           mkdir -p "${HOME}/.local/bin"
 
-          curl -fsSLO "https://github.com/Infrastrukturait/READMEgen/releases/download/${CLI_VERSION}/readmegen-cli"
-          curl -fsSLO "https://github.com/Infrastrukturait/READMEgen/releases/download/${CLI_VERSION}/readmegen-cli.md5"
+          curl -fsSLO "https://github.com/rafalmasiarek/readme-gen/releases/download/${CLI_VERSION}/readmegen-cli"
+          curl -fsSLO "https://github.com/rafalmasiarek/readme-gen/releases/download/${CLI_VERSION}/readmegen-cli.md5"
 
           md5sum -c readmegen-cli.md5
 
@@ -155,7 +155,7 @@ jobs:
           mkdir -p "${HOME}/.local/bin"
 
           curl -fsSL \
-            "https://raw.githubusercontent.com/Infrastrukturait/READMEgen/${CLI_REF}/bin/readmegen" \
+            "https://raw.githubusercontent.com/rafalmasiarek/readme-gen/${CLI_REF}/bin/readmegen" \
             -o "${HOME}/.local/bin/readmegen"
 
           chmod +x "${HOME}/.local/bin/readmegen"

@@ -46,8 +46,8 @@ Install the CLI from a release:
 ```bash
 CLI_VERSION="cli-v1.1.0"
 
-curl -fsSLO "https://github.com/Infrastrukturait/READMEgen/releases/download/${CLI_VERSION}/readmegen-cli"
-curl -fsSLO "https://github.com/Infrastrukturait/READMEgen/releases/download/${CLI_VERSION}/readmegen-cli.md5"
+curl -fsSLO "https://github.com/rafalmasiarek/readme-gen/releases/download/${CLI_VERSION}/readmegen-cli"
+curl -fsSLO "https://github.com/rafalmasiarek/readme-gen/releases/download/${CLI_VERSION}/readmegen-cli.md5"
 
 md5sum -c readmegen-cli.md5
 
