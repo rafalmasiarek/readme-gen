@@ -23,11 +23,18 @@ When using the `readmegen` CLI, the config file is detected automatically unless
 | `license` | string | `""` | License identifier. Supported values: `APACHE2`, `Apache-2.0`, `MIT`, `ISC`, `GPLv3`, `GPL-3.0`, `BUSL-1.1`. |
 | `license_change_date` | string | unset | BUSL-1.1 only. Date the license converts to the Change License, rendered in the license notice. Must be quoted in YAML to avoid timestamp auto-parsing. |
 | `license_contact` | string | unset | BUSL-1.1 only. Contact shown for alternative/commercial licensing inquiries. |
+| `license_heading` | string | unset | Overrides the `## License` heading with arbitrary markdown (an image, custom text, anything). |
+| `license_body` | string | unset | Overrides the entire license content (badge, notice text, and the automatic `LICENSE`/`LICENSE.md` link) with arbitrary markdown. When set, none of the built-in per-license-type rendering or the `LICENSE` file link happens — you own the whole body. |
+| `license_footer` | string | unset | Arbitrary markdown appended after the license body (built-in or overridden via `license_body`), before the Authors section. |
 | `logo` | string | `""` | Optional logo URL or path displayed below the title and badges. |
 | `badges` | array | `[]` | List of badges displayed below the title. |
-| `context` | array | `[]` | List of markdown blocks rendered before the license section. |
-| `authors` | array | `[]` | List of project authors or maintainers. |
-| `includes` | array | `[]` | List of raw markdown files to append to the README. |
+| `context` | array | `[]` | List of markdown blocks rendered after the title/logo/banners, before includes. |
+| `authors` | array | `[]` | List of project authors or maintainers, rendered after the license section. Not required when `authors_body` is set. |
+| `authors_heading` | string | unset | Overrides the `## Authors` heading with arbitrary markdown (an image, custom text, anything). |
+| `authors_body` | string | unset | Overrides the authors list rendering with arbitrary markdown. When set, the Authors section renders even if `authors` is empty or unset. |
+| `authors_footer` | string | unset | Arbitrary markdown appended after the authors body (built-in list or overridden via `authors_body`), before the references footer. |
+| `includes` | array | `[]` | List of raw markdown files appended after context, before the license section. |
+| `footer_includes` | array | `[]` | List of raw markdown files appended at the very end of the README, after everything else (license, authors, includes, references). Use this for content that must render last regardless of what else is configured. |
 | `references` | array | `[]` | List of reference links generated as `[1]`, `[2]`, etc. |
 | `deprecated` | object | unset | Marks the repository as deprecated. Can contain a custom `notice`. |
 | `icons_base_url` | string | `https://cdn.masiarek.pl/icons` | Base URL used to resolve `{icon name}` references. |

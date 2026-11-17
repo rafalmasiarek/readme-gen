@@ -52,9 +52,24 @@
 {{ end -}}
 {{- end }}
 
-{{- if $license }}
-## License
+{{- if and (has $config "includes") $config.includes }}
+{{ range $file := $config.includes -}}
+{{- if file.Exists $file }}
+{{ regexp.Replace $iconPattern $iconRepl (file.Read $file) }}
 
+{{- end }}
+{{ end -}}
+{{- end }}
+
+{{- if $license }}
+{{- if has $config "license_heading" }}
+{{ $config.license_heading }}
+{{- else }}
+## License
+{{- end }}
+{{ if has $config "license_body" }}
+{{ $config.license_body }}
+{{- else }}
 {{- if or (eq $license "APACHE2") (eq $license "Apache-2.0") }}
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
@@ -131,41 +146,49 @@ Source: {{ $gpl3SourceURL }}
 ![License: BUSL-1.1](https://img.shields.io/badge/license-BUSL--1.1-red)
 
 Business Source License 1.1.
-{{- if has $config "license_change_date" }}
+{{ if has $config "license_change_date" }}
 Source available; commercial use restricted until {{ $config.license_change_date }}.
-{{- end }}
-{{- if has $config "license_contact" }}
+{{ end }}
+{{ if has $config "license_contact" }}
 For alternative licensing, contact: {{ $config.license_contact }}
-{{- end }}
-
+{{ end }}
 {{- else }}
 License: {{ $license }}
 {{- end }}
 
-{{- if file.Exists "LICENSE.md" }}
+{{ if file.Exists "LICENSE.md" }}
 See [LICENSE.md](LICENSE.md) for full details.
 {{- else if file.Exists "LICENSE" }}
 See [LICENSE](LICENSE) for full details.
 {{- end }}
+{{- end }}
+
+{{- if has $config "license_footer" }}
+
+{{ $config.license_footer }}
+{{- end }}
 
 {{- end }}
 
-{{- if and (has $config "authors") $config.authors }}
+{{- if or (and (has $config "authors") $config.authors) (has $config "authors_body") }}
+{{- if has $config "authors_heading" }}
+{{ $config.authors_heading }}
+{{- else }}
 ## Authors
-
+{{- end }}
+{{ if has $config "authors_body" }}
+{{ $config.authors_body }}
+{{- else }}
 {{ range $author := $config.authors -}}
 - {{ $author.name }}{{ if has $author "website" }} | [website]({{ $author.website }}){{ end }}{{ if has $author "email" }} | [email](mailto:{{ $author.email }}){{ end }}{{ if has $author "github" }} | [github](https://github.com/{{ $author.github }}){{ end }}
 {{ end -}}
-
 {{- end }}
 
-{{- if and (has $config "includes") $config.includes }}
-{{ range $file := $config.includes -}}
-{{- if file.Exists $file }}
-{{ regexp.Replace $iconPattern $iconRepl (file.Read $file) }}
+{{- if has $config "authors_footer" }}
 
+{{ $config.authors_footer }}
 {{- end }}
-{{ end -}}
+
 {{- end }}
 
 <!-- references -->
@@ -174,5 +197,14 @@ See [LICENSE](LICENSE) for full details.
 {{- if and (has $config "references") $config.references }}
 {{ range $index, $reference_link := $config.references -}}
 [{{ math.Add $index 1 }}]: {{ $reference_link }}
+{{ end -}}
+{{- end }}
+
+{{- if and (has $config "footer_includes") $config.footer_includes }}
+{{ range $file := $config.footer_includes -}}
+{{- if file.Exists $file }}
+{{ regexp.Replace $iconPattern $iconRepl (file.Read $file) }}
+
+{{- end }}
 {{ end -}}
 {{- end }}
