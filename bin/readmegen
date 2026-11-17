@@ -124,7 +124,7 @@ if curl -fsSL "${BANNERS_AUTH_ARGS[@]}" \
     -o "${BANNERS_API_FILE}" 2>/dev/null \
   && gomplate \
       -d "api=${BANNERS_API_FILE}" \
-      -i '{{- $urls := coll.Slice -}}{{- range (ds "api") -}}{{- if eq .type "file" -}}{{- $urls = (coll.Append .download_url $urls) -}}{{- end -}}{{- end -}}{{ $urls | data.ToJSON }}' \
+      -i '{{- $urls := coll.Slice -}}{{- range (ds "api") -}}{{- if and (eq .type "file") (not (strings.HasPrefix "." .name)) -}}{{- $urls = (coll.Append .download_url $urls) -}}{{- end -}}{{- end -}}{{ $urls | data.ToJSON }}' \
       > "${BANNERS_JSON_FILE}" 2>/dev/null; then
   :
 else
