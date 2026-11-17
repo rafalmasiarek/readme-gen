@@ -24,7 +24,7 @@
 {{- end }}
 {{- end }}
 
-{{- if and (has $config "badges") $config.badges }}
+{{ if and (has $config "badges") $config.badges }}
 {{ range $badge := $config.badges -}}
 {{- if and (has $badge "url") $badge.url -}}
 [![{{ $badge.name }}]({{ $badge.image }})]({{ $badge.url }})
@@ -34,25 +34,25 @@
 {{ end }}
 {{- end }}
 
-{{- if and (has $config "logo") $config.logo }}
+{{ if and (has $config "logo") $config.logo }}
 ![{{ $config.name }}]({{ $config.logo }})
 
 {{- end }}
 
-{{- if $banners }}
+{{ if $banners }}
 {{ range $banner := $banners -}}
 ![{{ strings.TrimSuffix (path.Ext $banner) (path.Base $banner) }}]({{ $banner }})
 {{ end -}}
 {{- end }}
 
-{{- if and (has $config "context") $config.context }}
+{{ if and (has $config "context") $config.context }}
 {{ range $paragraph := $config.context -}}
 {{ regexp.Replace $iconPattern $iconRepl $paragraph }}
 
 {{ end -}}
 {{- end }}
 
-{{- if and (has $config "includes") $config.includes }}
+{{ if and (has $config "includes") $config.includes }}
 {{ range $file := $config.includes -}}
 {{- if file.Exists $file }}
 {{ regexp.Replace $iconPattern $iconRepl (file.Read $file) }}
@@ -61,7 +61,7 @@
 {{ end -}}
 {{- end }}
 
-{{- if $license }}
+{{ if $license }}
 {{- if has $config "license_heading" }}
 {{ $config.license_heading }}
 {{- else }}
@@ -170,7 +170,7 @@ See [LICENSE](LICENSE) for full details.
 
 {{- end }}
 
-{{- if or (and (has $config "authors") $config.authors) (has $config "authors_body") }}
+{{ if or (and (has $config "authors") $config.authors) (has $config "authors_body") }}
 {{- if has $config "authors_heading" }}
 {{ $config.authors_heading }}
 {{- else }}
@@ -191,20 +191,20 @@ See [LICENSE](LICENSE) for full details.
 
 {{- end }}
 
+{{ if and (has $config "footer_includes") $config.footer_includes }}
+{{ range $file := $config.footer_includes -}}
+{{- if file.Exists $file }}
+{{ regexp.Replace $iconPattern $iconRepl (file.Read $file) }}
+
+{{- end }}
+{{ end -}}
+{{- end }}
+
 <!-- references -->
 
 [repo_link]: {{ $config.repo_url }}
 {{- if and (has $config "references") $config.references }}
 {{ range $index, $reference_link := $config.references -}}
 [{{ math.Add $index 1 }}]: {{ $reference_link }}
-{{ end -}}
-{{- end }}
-
-{{- if and (has $config "footer_includes") $config.footer_includes }}
-{{ range $file := $config.footer_includes -}}
-{{- if file.Exists $file }}
-{{ regexp.Replace $iconPattern $iconRepl (file.Read $file) }}
-
-{{- end }}
 {{ end -}}
 {{- end }}
